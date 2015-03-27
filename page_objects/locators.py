@@ -18,11 +18,13 @@ class TopicLocators(object):
     NOTICE = (By.CLASS_NAME, 'system-message-notice')
     TITLE = (By.XPATH, '//*[@class="topic-title"]/a')
     TEXT = (By.XPATH, '//*[@class="topic-content text"]/p')
+    CONTENT = (By.CLASS_NAME, 'topic-content')
     BLOG = (By.XPATH, '//*[@class="topic-blog"]')
     DELETE_BUTTON = (By.XPATH, '//a[@class="actions-delete"]')
     DELETE_BUTTON_CONFIRM = (By.XPATH, '//input[@value="Удалить"]')
     AUTHOR = (By.XPATH, '//a[@rel="author"]')
     COMMENT_ADD_LINK = (By.CLASS_NAME, 'comment-add-link')
+
 
 class CreateTopicLocators(object):
     CREATE_TOPIC_BUTTON = (By.XPATH, '//button[@type="submit"]')
@@ -34,3 +36,4 @@ class CreateTopicLocators(object):
     MAIN_TEXT = (By.XPATH, '//textarea[@id="id_text"]')
     FORBID_COMMENT_CHECKBOX = (By.ID, 'id_forbid_comment')
     PUBLISH_CHECKBOX = (By.ID, 'id_publish')
+    MARKDOWN_H4 = (By.CLASS_NAME, 'editor-h4')

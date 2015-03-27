@@ -48,6 +48,11 @@ class TopicPage(BasePage):
             lambda d: d.find_element(*TopicLocators.TEXT).text
         )
 
+    def get_html(self):
+        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: d.find_element(*TopicLocators.CONTENT).get_attribute('innerHTML')
+        )
+
     def get_author(self):
         return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
             lambda d: d.find_element(*TopicLocators.AUTHOR).text
@@ -112,6 +117,12 @@ class CreateTopicPage(BasePage):
         if checkbox.is_selected():
             checkbox.click()
 
+    def insert_h4_tag(self):
+        self.driver.find_elements(*CreateTopicLocators.MARKDOWN_H4)[1].click()
+
+    def get_text_from_text_area_outer(self):
+        return self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).get_attribute('value')
+
 
 def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=True):
     create_topic_page = CreateTopicPage(driver)
@@ -123,6 +134,16 @@ def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=
     create_topic_page.set_outer_text(outer_text)
     create_topic_page.set_inner_text(inner_text)
     return create_topic_page
+
+
+def create_topic_with_tag(self, inner_text):
+    title = u'Тестовый заголовок'
+    outer_text = u'Краткое описание темы'
+    args = (self.driver, title, outer_text, inner_text)
+    create_topic_page = fill_topic_data(*args)
+    create_topic_page.create_topic()
+
+    return TopicPage(self.driver)
 
 
 
