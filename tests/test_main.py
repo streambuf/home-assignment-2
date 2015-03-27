@@ -5,30 +5,15 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from page_objects.page import *
 
-LOGIN = 'ftest7@tech-mail.ru'
-USERNAME = 'Феодулия Собакевич'
 COMMAND_EXECUTOR_URL = 'http://127.0.0.1:4444/wd/hub'
-
-
-def create_topic(driver, title='', outer_text='', inner_text='', blog_select=True):
-    create_topic_page = CreateTopicPage(driver)
-    create_topic_page.open()
-    if blog_select:
-        create_topic_page.blog_select_open()
-        create_topic_page.blog_select_set_option_flood()
-    create_topic_page.set_title(title)
-    create_topic_page.set_outer_text(outer_text)
-    create_topic_page.set_inner_text(inner_text)
-    create_topic_page.create_topic()
-    return create_topic_page
-
+LOGIN = 'ftest7@tech-mail.ru'
+USERNAME = u'Феодулия Собакевич'
+TITLE = u'Тестовый заголовок'
+OUTER_TEXT = u'Краткое описание темы'
+INNER_TEXT = u'Текст под катом'
 
 
 class MainTestCase(unittest.TestCase):
-    TITLE = u'Тестовый заголовок'
-    OUTER_TEXT = u'Краткое описание темы'
-    INNER_TEXT = u'Текст под катом'
-
     def setUp(self):
         browser = DesiredCapabilities.CHROME
         #browser = DesiredCapabilities.FIREFOX
@@ -41,36 +26,87 @@ class MainTestCase(unittest.TestCase):
         self.username = TopMenuPage(self.driver).get_username()
 
     # def test_auth(self):
-    #     self.assertEqual(self.username, unicode(USERNAME, "utf-8"))
+    #     self.assertEqual(self.username, USERNAME)
     #
     # def test_create_topic_with_empty_fields(self):
-    #     create_topic_page = create_topic(self.driver)
+    #     create_topic_page = fill_topic_data(self.driver)
+    #     create_topic_page.create_topic()
     #     self.assertTrue(create_topic_page.is_error())
-
+    #
     # def test_create_topic_with_empty_blog_option(self):
-    #     args = (self.driver, self.TITLE, self.OUTER_TEXT, self.INNER_TEXT, False)
-    #     create_topic_page = create_topic(*args)
+    #     args = (self.driver, TITLE, OUTER_TEXT, INNER_TEXT, False)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
     #     self.assertTrue(create_topic_page.is_error())
-
+    #
     # def test_create_topic_with_empty_title(self):
-    #     args = (self.driver, '', self.OUTER_TEXT, self.INNER_TEXT)
-    #     create_topic_page = create_topic(*args)
+    #     args = (self.driver, '', OUTER_TEXT, INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
     #     self.assertTrue(create_topic_page.is_error())
-
+    #
     # def test_create_topic_with_empty_outer_text(self):
-    #     args = (self.driver, self.TITLE, '', self.INNER_TEXT)
-    #     create_topic_page = create_topic(*args)
+    #     args = (self.driver, TITLE, '', INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
     #     self.assertTrue(create_topic_page.is_error())
     #
     # def test_create_topic_with_empty_inner_text(self):
-    #     args = (self.driver, self.TITLE, self.OUTER_TEXT)
-    #     create_topic_page = create_topic(*args)
+    #     args = (self.driver, TITLE, OUTER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
+    #     self.assertTrue(create_topic_page.is_error())
+    #
+    # def test_create_topic_with_default_settings(self):
+    #     args = (self.driver, TITLE, OUTER_TEXT, INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
+
+    #     topic_page = TopicPage(self.driver)
+    #     self.assertEqual(topic_page.get_title(), TITLE)
+    #     self.assertEqual(topic_page.get_text(), INNER_TEXT)
+    #     self.assertEqual(topic_page.get_author(), USERNAME)
+    #     self.assertTrue(topic_page.comment_add_link_is_displayed())
+    #     topic_page.open_blog()
+    #
+    #     blog_page = BlogPage(self.driver)
+    #     self.assertEqual(blog_page.topic.get_title(), TITLE)
+    #     self.assertEqual(blog_page.topic.get_text(), OUTER_TEXT)
+    #     self.assertEqual(blog_page.topic.get_author(), USERNAME)
+    #
+    #     blog_page.topic.delete()
+    #
+    # def test_create_topic_with_title_greater_max(self):
+    #     title_greater_max = 'a' * 251
+    #     args = (self.driver, title_greater_max, OUTER_TEXT, INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.create_topic()
     #     self.assertTrue(create_topic_page.is_error())
 
-    def test_create_topic_with_default_settings(self):
-        args = (self.driver, self.TITLE, self.OUTER_TEXT, self.INNER_TEXT)
-        create_topic(*args)
-        self.assertTrue(TopicPage(self.driver).is_success())
+    # def test_create_topic_with_forbid_comment(self):
+    #     args = (self.driver, TITLE, OUTER_TEXT, INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.set_forbid_comment_true()
+    #     create_topic_page.create_topic()
+
+    #     topic_page = TopicPage(self.driver)
+    #     self.assertFalse(topic_page.comment_add_link_is_displayed())
+    #     topic_page.delete()
+
+    # def test_create_topic_with_publish_false(self):
+    #     unique_title = u'unique_title'
+    #     args = (self.driver, unique_title, OUTER_TEXT, INNER_TEXT)
+    #     create_topic_page = fill_topic_data(*args)
+    #     create_topic_page.set_publish_false()
+    #     create_topic_page.create_topic()
+    #
+    #     topic_page = TopicPage(self.driver)
+    #     topic_page.open_blog()
+    #
+    #     blog_page = BlogPage(self.driver)
+    #     self.assertNotEqual(blog_page.topic.get_title(), unique_title)
+    #     blog_page.topic.delete()
+
 
     def tearDown(self):
         pass

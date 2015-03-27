@@ -4,7 +4,7 @@ __author__ = 'max'
 import os
 from locators import *
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 
 TIMEOUT = 10
 POLL_FREQUENCY = 0.1
@@ -38,11 +38,40 @@ class TopMenuPage(BasePage):
 
 
 class TopicPage(BasePage):
-    def is_success(self):
-        wait = WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY)
-        return wait.until(
-            lambda d: d.find_element(*TopicLocators.NOTICE).is_displayed()
+    def get_title(self):
+        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: d.find_element(*TopicLocators.TITLE).text
         )
+
+    def get_text(self):
+        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: d.find_element(*TopicLocators.TEXT).text
+        )
+
+    def get_author(self):
+        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: d.find_element(*TopicLocators.AUTHOR).text
+        )
+
+    def open_blog(self):
+        self.driver.find_element(*TopicLocators.BLOG).click()
+
+    def delete(self):
+        self.driver.find_element(*TopicLocators.DELETE_BUTTON).click()
+        self.driver.find_element(*TopicLocators.DELETE_BUTTON_CONFIRM).click()
+
+    def comment_add_link_is_displayed(self):
+        try:
+            self.driver.find_element(*TopicLocators.COMMENT_ADD_LINK)
+        except NoSuchElementException:
+            return False
+        return True
+
+
+class BlogPage(BasePage):
+    @property
+    def topic(self):
+        return TopicPage(self.driver)
 
 
 class CreateTopicPage(BasePage):
@@ -73,8 +102,27 @@ class CreateTopicPage(BasePage):
     def set_inner_text(self, inner_text):
         self.driver.find_element(*CreateTopicLocators.MAIN_TEXT).send_keys(inner_text)
 
+    def set_forbid_comment_true(self):
+        checkbox = self.driver.find_element(*CreateTopicLocators.FORBID_COMMENT_CHECKBOX)
+        if not checkbox.is_selected():
+            checkbox.click()
+
+    def set_publish_false(self):
+        checkbox = self.driver.find_element(*CreateTopicLocators.PUBLISH_CHECKBOX)
+        if checkbox.is_selected():
+            checkbox.click()
 
 
+def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=True):
+    create_topic_page = CreateTopicPage(driver)
+    create_topic_page.open()
+    if blog_select:
+        create_topic_page.blog_select_open()
+        create_topic_page.blog_select_set_option_flood()
+    create_topic_page.set_title(title)
+    create_topic_page.set_outer_text(outer_text)
+    create_topic_page.set_inner_text(inner_text)
+    return create_topic_page
 
 
 
