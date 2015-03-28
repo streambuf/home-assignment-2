@@ -2,7 +2,6 @@
 __author__ = 'max'
 import unittest
 from selenium import webdriver
-from functools import wraps
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from page_objects.page import *
 from page_objects.constants import Tag
@@ -10,10 +9,14 @@ from page_objects.constants import Tag
 COMMAND_EXECUTOR_URL = 'http://127.0.0.1:4444/wd/hub'
 LOGIN = 'ftest7@tech-mail.ru'
 USERNAME = u'Феодулия Собакевич'
+PROFILE_NAME = u'Феодулия'
 TITLE = u'Тестовый заголовок'
 OUTER_TEXT = u'Краткое описание темы'
 INNER_TEXT = u'Текст под катом'
 MAX_TITLE_LENGTH = 250
+PATH_TO_IMAGE = u'/undefined'
+URl = u'http://test.ru'
+URL_TITLE = u'title'
 
 MARKDOWN_H4 = u'#### '
 MARKDOWN_H5 = u'##### '
@@ -24,8 +27,8 @@ MARKDOWN_QUOTES = u'> '
 MARKDOWN_CODE = u'``'
 MARKDOWN_LIST = u'* '
 MARKDOWN_NUM_LIST = u'1. '
-MARKDOWN_IMAGE = '![](test.png)'
-MARKDOWN_LINK = '[name](http://test.ru "title")'
+MARKDOWN_IMAGE = '![](undefined)'
+MARKDOWN_LINK = '(http://test.ru "title")'
 MARKDOWN_LINK_PROFILE = '[Феодулия Собакевич](/profile/f.sobakevich/)'
 
 TEST_H4 = '#### test'
@@ -261,6 +264,28 @@ class MainTestCase(unittest.TestCase):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.NUM_LIST)
         self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_NUM_LIST)
+
+    @not_create_topic
+    def test_create_topic_markdown_image(self):
+        create_topic_page = fill_topic_data(self.driver)
+        create_topic_page.insert_tag(Tag.IMAGE)
+        create_topic_page.set_image(PATH_TO_IMAGE)
+        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_IMAGE)
+
+    @not_create_topic
+    def test_create_topic_markdown_link(self):
+        create_topic_page = fill_topic_data(self.driver)
+        create_topic_page.insert_tag(Tag.LINK)
+        create_topic_page.set_link(URl, URL_TITLE)
+        self.assertIn(MARKDOWN_LINK, create_topic_page.get_text_from_text_area_outer())
+
+    @not_create_topic
+    def test_create_topic_markdown_link_profile(self):
+        create_topic_page = fill_topic_data(self.driver)
+        create_topic_page.insert_tag(Tag.LINK_PROFILE)
+        create_topic_page.set_profile(PROFILE_NAME)
+        self.assertIn(unicode(MARKDOWN_LINK_PROFILE, "utf-8"), create_topic_page.get_text_from_text_area_outer())
+
 
 
 

@@ -6,11 +6,13 @@ from locators import *
 from constants import Tag
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
 
 TIMEOUT = 10
 POLL_FREQUENCY = 0.1
 USER_PASSWORD = os.environ['TTHA2PASSWORD']
 NUM_OUTER_PANEL = 1
+NUM_PROFILE = 1
 
 
 class BasePage(object):
@@ -135,7 +137,22 @@ class CreateTopicPage(BasePage):
             Tag.LINK_PROFILE: CreateTopicLocators.BUTTON_LINK_PROFILE
         }[tag]
         self.driver.find_elements(*locator)[NUM_OUTER_PANEL].click()
-        
+
+    def set_image(self, path):
+        self.driver.find_elements(*CreateTopicLocators.INPUT_FILE)[NUM_OUTER_PANEL].send_keys(path)
+
+    def set_link(self, url, title):
+        set_text_alert(self, url)
+        set_text_alert(self, title)
+
+    def set_profile(self, profile_name):
+        self.driver.find_element(*CreateTopicLocators.SEARCH_USER_FIELD).send_keys(profile_name)
+        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: d.find_element(*CreateTopicLocators.USER_PROFILE_LINK).is_displayed()
+        )
+        self.driver.find_element(*CreateTopicLocators.USER_PROFILE_LINK).click()
+
+
     def get_text_from_text_area_outer(self):
         return self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).get_attribute('value')
 
@@ -177,9 +194,14 @@ def create_topic_with_tag(self, inner_text):
     args = (self.driver, title, outer_text, inner_text)
     create_topic_page = fill_topic_data(*args)
     create_topic_page.create_topic()
-
     return TopicPage(self.driver)
 
 
+def set_text_alert(self, text):
+    wait = WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY)
+    wait.until(EC.alert_is_present())
+    alert = self.driver.switch_to_alert()
+    alert.send_keys(text)
+    alert.accept()
 
 

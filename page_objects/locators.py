@@ -42,6 +42,7 @@ class CreateTopicLocators(object):
     POLL_ANSWER2_FIELD = (By.ID, 'id_form-1-answer')
     POLL_ANSWER3_FIELD = (By.ID, 'id_form-2-answer')
     ADD_ANSWER_LINK = (By.CLASS_NAME, 'add-poll-answer')
+    INPUT_FILE = (By.NAME, 'filedata')
     BUTTON_H4 = (By.CLASS_NAME, 'editor-h4')
     BUTTON_H5 = (By.CLASS_NAME, 'editor-h5')
     BUTTON_H6 = (By.CLASS_NAME, 'editor-h6')
@@ -54,4 +55,6 @@ class CreateTopicLocators(object):
     BUTTON_IMAGE = (By.CLASS_NAME, 'editor-picture')
     BUTTON_LINK = (By.CLASS_NAME, 'editor-link')
     BUTTON_LINK_PROFILE = (By.CLASS_NAME, 'editor-user')
+    SEARCH_USER_FIELD = (By.ID, 'search-user-login-popup')
+    USER_PROFILE_LINK = (By.CSS_SELECTOR, '.realname>.user_profile_path')
 
