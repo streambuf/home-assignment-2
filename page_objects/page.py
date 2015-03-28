@@ -3,12 +3,14 @@ __author__ = 'max'
 
 import os
 from locators import *
+from constants import Tag
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 
 TIMEOUT = 10
 POLL_FREQUENCY = 0.1
 USER_PASSWORD = os.environ['TTHA2PASSWORD']
+NUM_OUTER_PANEL = 1
 
 
 class BasePage(object):
@@ -117,11 +119,44 @@ class CreateTopicPage(BasePage):
         if checkbox.is_selected():
             checkbox.click()
 
-    def insert_h4_tag(self):
-        self.driver.find_elements(*CreateTopicLocators.MARKDOWN_H4)[1].click()
-
+    def insert_tag(self, tag):
+        locator = {
+            Tag.H4: CreateTopicLocators.BUTTON_H4,
+            Tag.H5: CreateTopicLocators.BUTTON_H5,
+            Tag.H6: CreateTopicLocators.BUTTON_H6,
+            Tag.B: CreateTopicLocators.BUTTON_B,
+            Tag.I: CreateTopicLocators.BUTTON_I,
+            Tag.QUOTES: CreateTopicLocators.BUTTON_QUOTES,
+            Tag.CODE: CreateTopicLocators.BUTTON_CODE,
+            Tag.LIST: CreateTopicLocators.BUTTON_LIST,
+            Tag.NUM_LIST: CreateTopicLocators.BUTTON_NUM_LIST,
+            Tag.IMAGE: CreateTopicLocators.BUTTON_IMAGE,
+            Tag.LINK: CreateTopicLocators.BUTTON_LINK,
+            Tag.LINK_PROFILE: CreateTopicLocators.BUTTON_LINK_PROFILE
+        }[tag]
+        self.driver.find_elements(*locator)[NUM_OUTER_PANEL].click()
+        
     def get_text_from_text_area_outer(self):
         return self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).get_attribute('value')
+
+    def set_add_poll_true(self):
+        checkbox = self.driver.find_element(*CreateTopicLocators.ADD_POLL_CHECKBOX)
+        if checkbox.is_selected():
+            checkbox.click()
+
+    def add_answer_for_poll(self):
+        self.driver.find_element(*CreateTopicLocators.ADD_ANSWER_LINK).click()
+
+    def set_question_poll(self, question):
+        self.driver.find_element(*CreateTopicLocators.POLL_QUESTION_FIELD).send_keys(question)
+
+    def set_answer_poll(self, num_answer, answer):
+        locator = {
+            0: CreateTopicLocators.POLL_ANSWER1_FIELD,
+            1: CreateTopicLocators.POLL_ANSWER2_FIELD,
+            2: CreateTopicLocators.POLL_ANSWER3_FIELD
+        }[num_answer]
+        self.driver.find_element(*locator).send_keys(answer)
 
 
 def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=True):
