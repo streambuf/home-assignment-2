@@ -5,57 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from page_objects.page import *
 from page_objects.constants import Tag
-
-COMMAND_EXECUTOR_URL = 'http://127.0.0.1:4444/wd/hub'
-LOGIN = 'ftest7@tech-mail.ru'
-USERNAME = u'Феодулия Собакевич'
-PROFILE_NAME = u'Феодулия'
-TITLE = u'Тестовый заголовок'
-OUTER_TEXT = u'Краткое описание темы'
-INNER_TEXT = u'Текст под катом'
-MAX_TITLE_LENGTH = 250
-PATH_TO_IMAGE = u'/undefined'
-URl = u'http://test.ru'
-URL_TITLE = u'title'
-
-MARKDOWN_H4 = u'#### '
-MARKDOWN_H5 = u'##### '
-MARKDOWN_H6 = u'###### '
-MARKDOWN_B = u'****'
-MARKDOWN_I = u'**'
-MARKDOWN_QUOTES = u'> '
-MARKDOWN_CODE = u'``'
-MARKDOWN_LIST = u'* '
-MARKDOWN_NUM_LIST = u'1. '
-MARKDOWN_IMAGE = '![](undefined)'
-MARKDOWN_LINK = '(http://test.ru "title")'
-MARKDOWN_LINK_PROFILE = '[Феодулия Собакевич](/profile/f.sobakevich/)'
-
-TEST_H4 = '#### test'
-TEST_H5 = '##### test'
-TEST_H6 = '###### test'
-TEST_B = '**test**'
-TEST_I = '*test*'
-TEST_QUOTES = '> test'
-TEST_CODE = '`test`'
-TEST_LIST = '* test'
-TEST_NUM_LIST = '1. test'
-TEST_IMAGE = '![](test.png)'
-TEST_LINK = '[name](http://test.ru "title")'
-TEST_LINK_PROFILE = u'[Феодулия Собакевич](/profile/f.sobakevich/)'
-
-HTML_H4 = '<h4>test</h4>'
-HTML_H5 = '<h5>test</h5>'
-HTML_H6 = '<h6>test</h6>'
-HTML_B = '<strong>test</strong>'
-HTML_I = '<em>test</em>'
-HTML_QUOTES = '&gt; test'
-HTML_CODE = '<code>test</code>'
-HTML_LIST = '<ul>\n<li>test</li>\n</ul>'
-HTML_NUM_LIST = '<ol>\n<li>test</li>\n</ol>'
-HTML_IMAGE = '<img'
-HTML_LINK = '<a href="http://test.ru'
-HTML_LINK_PROFILE = '<a href="/profile/f.sobakevich/">'
+from test_constants import *
 
 
 def not_create_topic(fn):
@@ -67,8 +17,8 @@ def not_create_topic(fn):
 
 class MainTestCase(unittest.TestCase):
     def setUp(self):
-        browser = DesiredCapabilities.CHROME
-        #browser = DesiredCapabilities.FIREFOX
+        #browser = DesiredCapabilities.CHROME
+        browser = DesiredCapabilities.FIREFOX
         self.driver = webdriver.Remote(
             command_executor=COMMAND_EXECUTOR_URL,
             desired_capabilities=browser)
@@ -164,147 +114,133 @@ class MainTestCase(unittest.TestCase):
         self.assertNotEqual(blog_page.topic.get_title(), TITLE)
 
     def test_create_topic_with_tag_h4(self):
-        self.topic_page = create_topic_with_tag(self, TEST_H4)
-        self.assertIn(HTML_H4, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, H4.text)
+        self.assertIn(H4.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_h5(self):
-        self.topic_page = create_topic_with_tag(self, TEST_H5)
-        self.assertIn(HTML_H5, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, H5.text)
+        self.assertIn(H5.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_h6(self):
-        self.topic_page = create_topic_with_tag(self, TEST_H6)
-        self.assertIn(HTML_H6, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, H6.text)
+        self.assertIn(H6.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_b(self):
-        self.topic_page = create_topic_with_tag(self, TEST_B)
-        self.assertIn(HTML_B, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, B.text)
+        self.assertIn(B.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_i(self):
-        self.topic_page = create_topic_with_tag(self, TEST_I)
-        self.assertIn(HTML_I, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, I.text)
+        self.assertIn(I.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_code(self):
-        self.topic_page = create_topic_with_tag(self, TEST_CODE)
-        self.assertIn(HTML_CODE, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, CODE.text)
+        self.assertIn(CODE.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_quotes(self):
-        self.topic_page = create_topic_with_tag(self, TEST_QUOTES)
-        self.assertIn(HTML_QUOTES, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, QUOTES.text)
+        self.assertIn(QUOTES.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_list(self):
-        self.topic_page = create_topic_with_tag(self, TEST_LIST)
-        self.assertIn(HTML_LIST, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, LIST.text)
+        self.assertIn(LIST.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_num_list(self):
-        self.topic_page = create_topic_with_tag(self, TEST_NUM_LIST)
-        self.assertIn(HTML_NUM_LIST, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, NUM_LIST.text)
+        self.assertIn(NUM_LIST.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_image(self):
-        self.topic_page = create_topic_with_tag(self, TEST_IMAGE)
-        self.assertIn(HTML_IMAGE, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, IMAGE.text)
+        self.assertIn(IMAGE.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_link(self):
-        self.topic_page = create_topic_with_tag(self, TEST_LINK)
-        self.assertIn(HTML_LINK, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, LINK.text)
+        self.assertIn(LINK.html, self.topic_page.get_html())
 
     def test_create_topic_with_tag_link_profile(self):
-        self.topic_page = create_topic_with_tag(self, TEST_LINK_PROFILE)
-        self.assertIn(HTML_LINK_PROFILE, self.topic_page.get_html())
+        self.topic_page = create_topic_with_tag(self, LINK_PROFILE.text)
+        self.assertIn(LINK_PROFILE.html, self.topic_page.get_html())
 
     @not_create_topic
     def test_create_topic_markdown_h4(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.H4)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_H4)
+        self.assertEqual(create_topic_page.get_outer_text(), H4.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_h5(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.H5)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_H5)
+        self.assertEqual(create_topic_page.get_outer_text(), H5.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_h6(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.H6)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_H6)
+        self.assertEqual(create_topic_page.get_outer_text(), H6.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_b(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.B)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_B)
+        self.assertEqual(create_topic_page.get_outer_text(), B.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_i(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.I)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_I)
+        self.assertEqual(create_topic_page.get_outer_text(), I.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_quotes(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.QUOTES)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_QUOTES)
+        self.assertEqual(create_topic_page.get_outer_text(), QUOTES.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_code(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.CODE)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_CODE)
+        self.assertEqual(create_topic_page.get_outer_text(), CODE.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_list(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.LIST)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_LIST)
+        self.assertEqual(create_topic_page.get_outer_text(), LIST.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_num_list(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.NUM_LIST)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_NUM_LIST)
+        self.assertEqual(create_topic_page.get_outer_text(), NUM_LIST.markdown)
 
     @not_create_topic
     def test_create_topic_markdown_image(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.IMAGE)
         create_topic_page.set_image(PATH_TO_IMAGE)
-        self.assertEqual(create_topic_page.get_text_from_text_area_outer(), MARKDOWN_IMAGE)
+        self.assertIn(IMAGE.markdown, create_topic_page.get_outer_text())
 
     @not_create_topic
     def test_create_topic_markdown_link(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.LINK)
         create_topic_page.set_link(URl, URL_TITLE)
-        self.assertIn(MARKDOWN_LINK, create_topic_page.get_text_from_text_area_outer())
+        self.assertIn(LINK.markdown, create_topic_page.get_outer_text())
 
     @not_create_topic
     def test_create_topic_markdown_link_profile(self):
         create_topic_page = fill_topic_data(self.driver)
         create_topic_page.insert_tag(Tag.LINK_PROFILE)
         create_topic_page.set_profile(PROFILE_NAME)
-        self.assertIn(unicode(MARKDOWN_LINK_PROFILE, "utf-8"), create_topic_page.get_text_from_text_area_outer())
-
-
-
-
+        profile_markdown = unicode(LINK_PROFILE.markdown, "utf-8")
+        self.assertIn(profile_markdown, create_topic_page.get_outer_text())
 
     def tearDown(self):
         if self.post_created:
             self.topic_page.delete()
         self.driver.close()
 
-
-
-    # def test_clear(self):
-    #     args = (self.driver, TITLE, OUTER_TEXT, INNER_TEXT)
-    #     create_topic_page = fill_topic_data(*args)
-    #     create_topic_page.create_topic()
-    #     topic_page = TopicPage(self.driver)
-    #     topic_page.open_blog()
-    #     while True:
-    #         blog_page = BlogPage(self.driver)
-    #         blog_page.topic.delete()
 
 

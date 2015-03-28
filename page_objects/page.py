@@ -13,6 +13,7 @@ POLL_FREQUENCY = 0.1
 USER_PASSWORD = os.environ['TTHA2PASSWORD']
 NUM_OUTER_PANEL = 1
 NUM_PROFILE = 1
+EMPTY_FIELD = u''
 
 
 class BasePage(object):
@@ -139,7 +140,11 @@ class CreateTopicPage(BasePage):
         self.driver.find_elements(*locator)[NUM_OUTER_PANEL].click()
 
     def set_image(self, path):
+        self.driver.execute_script('$(".markdown-upload-photo-container").show()')
         self.driver.find_elements(*CreateTopicLocators.INPUT_FILE)[NUM_OUTER_PANEL].send_keys(path)
+        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+            lambda d: self.get_outer_text() != EMPTY_FIELD
+        )
 
     def set_link(self, url, title):
         set_text_alert(self, url)
@@ -152,8 +157,7 @@ class CreateTopicPage(BasePage):
         )
         self.driver.find_element(*CreateTopicLocators.USER_PROFILE_LINK).click()
 
-
-    def get_text_from_text_area_outer(self):
+    def get_outer_text(self):
         return self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).get_attribute('value')
 
     def set_add_poll_true(self):
