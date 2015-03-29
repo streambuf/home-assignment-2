@@ -4,78 +4,59 @@ __author__ = 'max'
 import os
 from locators import *
 from constants import Tag
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
+from action import Action
 
-TIMEOUT = 10
-POLL_FREQUENCY = 0.1
 USER_PASSWORD = os.environ['TTHA2PASSWORD']
 NUM_OUTER_PANEL = 1
 NUM_PROFILE = 1
-EMPTY_FIELD = u''
 
 
 class BasePage(object):
     def __init__(self, driver):
         self.driver = driver
+        self.action = Action(self.driver)
 
 
 class MainPage(BasePage):
     MAIN_PAGE_URL = 'http://ftest.stud.tech-mail.ru'
 
     def open(self):
-        self.driver.get(self.MAIN_PAGE_URL)
+        self.action.open_page(self.MAIN_PAGE_URL)
 
     def auth(self, login):
-        self.driver.find_element(*MainPageLocators.SHOW_LOGIN_FORM_BUTTON).click()
-        self.driver.find_element(*MainPageLocators.LOGIN_FIELD).send_keys(login)
-        self.driver.find_element(*MainPageLocators.PASSWORD_FIELD).send_keys(USER_PASSWORD)
-        self.driver.find_element(*MainPageLocators.LOGIN_BUTTON).submit()
+        self.action.click(MPL.SHOW_LOGIN_FORM_BUTTON)
+        self.action.input(MPL.LOGIN_FIELD, login)
+        self.action.input(MPL.PASSWORD_FIELD, USER_PASSWORD)
+        self.action.submit(MPL.LOGIN_BUTTON)
 
 
 class TopMenuPage(BasePage):
     def get_username(self):
-        wait = WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY)
-        return wait.until(
-            lambda d: d.find_element(*TopMenuLocators.USERNAME).text
-        )
+        return self.action.get_text_with_wait(TML.USERNAME)
 
 
 class TopicPage(BasePage):
     def get_title(self):
-        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: d.find_element(*TopicLocators.TITLE).text
-        )
+        self.action.get_text_with_wait(TL.TITLE)
 
     def get_text(self):
-        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: d.find_element(*TopicLocators.TEXT).text
-        )
+        self.action.get_text_with_wait(TL.TEXT)
 
     def get_html(self):
-        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: d.find_element(*TopicLocators.CONTENT).get_attribute('innerHTML')
-        )
+        self.action.get_attr_with_wait(TL.CONTENT, 'innerHTML')
 
     def get_author(self):
-        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: d.find_element(*TopicLocators.AUTHOR).text
-        )
+        self.action.get_text_with_wait(TL.AUTHOR)
 
     def open_blog(self):
-        self.driver.find_element(*TopicLocators.BLOG).click()
+        self.action.click(TL.BLOG)
 
     def delete(self):
-        self.driver.find_element(*TopicLocators.DELETE_BUTTON).click()
-        self.driver.find_element(*TopicLocators.DELETE_BUTTON_CONFIRM).click()
+        self.action.click(TL.DELETE_BUTTON)
+        self.action.click(TL.DELETE_BUTTON_CONFIRM)
 
     def comment_add_link_is_displayed(self):
-        try:
-            self.driver.find_element(*TopicLocators.COMMENT_ADD_LINK)
-        except NoSuchElementException:
-            return False
-        return True
+        self.action.is_exists(TL.COMMENT_ADD_LINK)
 
 
 class BlogPage(BasePage):
@@ -88,124 +69,87 @@ class CreateTopicPage(BasePage):
     CREATE_TOPIC_PAGE_URL = 'http://ftest.stud.tech-mail.ru/blog/topic/create/'
 
     def open(self):
-        self.driver.get(self.CREATE_TOPIC_PAGE_URL)
+        self.action.open_page(self.CREATE_TOPIC_PAGE_URL)
+        self.action.execute_script('$("#id_text_short").show()')
         TopMenuPage(self.driver).get_username()
 
     def create_topic(self):
-        self.driver.find_element(*CreateTopicLocators.CREATE_TOPIC_BUTTON).submit()
+        self.action.submit(CTL.CREATE_TOPIC_BUTTON)
 
     def is_error(self):
-        return self.driver.find_element(*CreateTopicLocators.SYSTEM_MESSAGE_ERROR).is_displayed()
+        return self.action.is_displayed(CTL.SYSTEM_MESSAGE_ERROR)
 
     def blog_select_open(self):
-        self.driver.find_element(*CreateTopicLocators.BLOGSELECT).click()
+        self.action.click(CTL.BLOGSELECT)
 
     def blog_select_set_option_flood(self):
-        self.driver.find_element(*CreateTopicLocators.OPTION_FLOOD).click()
+        self.action.click(CTL.OPTION_FLOOD)
 
     def set_title(self, title):
-        self.driver.find_element(*CreateTopicLocators.TITLE).send_keys(title)
+        self.action.input(CTL.TITLE, title)
 
     def set_outer_text(self, outer_text):
-        self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).send_keys(outer_text)
+        self.action.input(CTL.SHORT_TEXT, outer_text)
 
     def set_inner_text(self, inner_text):
-        self.driver.find_element(*CreateTopicLocators.MAIN_TEXT).send_keys(inner_text)
+        self.action.input(CTL.MAIN_TEXT, inner_text)
 
     def set_forbid_comment_true(self):
-        checkbox = self.driver.find_element(*CreateTopicLocators.FORBID_COMMENT_CHECKBOX)
-        if not checkbox.is_selected():
-            checkbox.click()
+        self.action.click_if_not_selected(CTL.FORBID_COMMENT_CHECKBOX)
 
     def set_publish_false(self):
-        checkbox = self.driver.find_element(*CreateTopicLocators.PUBLISH_CHECKBOX)
-        if checkbox.is_selected():
-            checkbox.click()
+        self.action.click_if_selected(CTL.PUBLISH_CHECKBOX)
 
     def insert_tag(self, tag):
         locator = {
-            Tag.H4: CreateTopicLocators.BUTTON_H4,
-            Tag.H5: CreateTopicLocators.BUTTON_H5,
-            Tag.H6: CreateTopicLocators.BUTTON_H6,
-            Tag.B: CreateTopicLocators.BUTTON_B,
-            Tag.I: CreateTopicLocators.BUTTON_I,
-            Tag.QUOTES: CreateTopicLocators.BUTTON_QUOTES,
-            Tag.CODE: CreateTopicLocators.BUTTON_CODE,
-            Tag.LIST: CreateTopicLocators.BUTTON_LIST,
-            Tag.NUM_LIST: CreateTopicLocators.BUTTON_NUM_LIST,
-            Tag.IMAGE: CreateTopicLocators.BUTTON_IMAGE,
-            Tag.LINK: CreateTopicLocators.BUTTON_LINK,
-            Tag.LINK_PROFILE: CreateTopicLocators.BUTTON_LINK_PROFILE
+            Tag.H4: CTL.BUTTON_H4,
+            Tag.H5: CTL.BUTTON_H5,
+            Tag.H6: CTL.BUTTON_H6,
+            Tag.B: CTL.BUTTON_B,
+            Tag.I: CTL.BUTTON_I,
+            Tag.QUOTES: CTL.BUTTON_QUOTES,
+            Tag.CODE: CTL.BUTTON_CODE,
+            Tag.LIST: CTL.BUTTON_LIST,
+            Tag.NUM_LIST: CTL.BUTTON_NUM_LIST,
+            Tag.IMAGE: CTL.BUTTON_IMAGE,
+            Tag.LINK: CTL.BUTTON_LINK,
+            Tag.LINK_PROFILE: CTL.BUTTON_LINK_PROFILE
         }[tag]
-        self.driver.find_elements(*locator)[NUM_OUTER_PANEL].click()
+        self.action.click_num(locator, NUM_OUTER_PANEL)
 
     def set_image(self, path):
-        self.driver.execute_script('$(".markdown-upload-photo-container").show()')
-        self.driver.find_elements(*CreateTopicLocators.INPUT_FILE)[NUM_OUTER_PANEL].send_keys(path)
-        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: self.get_outer_text() != EMPTY_FIELD
-        )
+        self.action.execute_script('$(".markdown-upload-photo-container").show()')
+        self.action.input_num(CTL.INPUT_FILE, NUM_OUTER_PANEL, path)
+        self.action.wait_input_text(CTL.SHORT_TEXT, 'value')
 
     def set_link(self, url, title):
-        set_text_alert(self, url)
-        set_text_alert(self, title)
+        self.action.set_text_alert(url)
+        self.action.set_text_alert(title)
 
     def set_profile(self, profile_name):
-        self.driver.find_element(*CreateTopicLocators.SEARCH_USER_FIELD).send_keys(profile_name)
-        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: d.find_element(*CreateTopicLocators.USER_PROFILE_LINK).is_displayed()
-        )
-        self.driver.find_element(*CreateTopicLocators.USER_PROFILE_LINK).click()
+        self.action.input(CTL.SEARCH_USER_FIELD, profile_name)
+        self.action.wait_is_displayed(CTL.USER_PROFILE_LINK)
+        self.action.click(CTL.USER_PROFILE_LINK)
 
     def get_outer_text(self):
-        return self.driver.find_element(*CreateTopicLocators.SHORT_TEXT).get_attribute('value')
+        return self.action.get_attr(CTL.SHORT_TEXT, 'value')
 
     def set_add_poll_true(self):
-        checkbox = self.driver.find_element(*CreateTopicLocators.ADD_POLL_CHECKBOX)
-        if checkbox.is_selected():
-            checkbox.click()
+        self.action.click_if_selected(CTL.ADD_POLL_CHECKBOX)
 
     def add_answer_for_poll(self):
-        self.driver.find_element(*CreateTopicLocators.ADD_ANSWER_LINK).click()
+        self.action.click(CTL.ADD_ANSWER_LINK)
 
     def set_question_poll(self, question):
-        self.driver.find_element(*CreateTopicLocators.POLL_QUESTION_FIELD).send_keys(question)
+        self.action.input(CTL.POLL_QUESTION_FIELD, question)
 
     def set_answer_poll(self, num_answer, answer):
         locator = {
-            0: CreateTopicLocators.POLL_ANSWER1_FIELD,
-            1: CreateTopicLocators.POLL_ANSWER2_FIELD,
-            2: CreateTopicLocators.POLL_ANSWER3_FIELD
+            0: CTL.POLL_ANSWER1_FIELD,
+            1: CTL.POLL_ANSWER2_FIELD,
+            2: CTL.POLL_ANSWER3_FIELD
         }[num_answer]
-        self.driver.find_element(*locator).send_keys(answer)
+        self.action.input(locator, answer)
 
-
-def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=True):
-    create_topic_page = CreateTopicPage(driver)
-    create_topic_page.open()
-    if blog_select:
-        create_topic_page.blog_select_open()
-        create_topic_page.blog_select_set_option_flood()
-    create_topic_page.set_title(title)
-    create_topic_page.set_outer_text(outer_text)
-    create_topic_page.set_inner_text(inner_text)
-    return create_topic_page
-
-
-def create_topic_with_tag(self, inner_text):
-    title = u'Тестовый заголовок'
-    outer_text = u'Краткое описание темы'
-    args = (self.driver, title, outer_text, inner_text)
-    create_topic_page = fill_topic_data(*args)
-    create_topic_page.create_topic()
-    return TopicPage(self.driver)
-
-
-def set_text_alert(self, text):
-    wait = WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY)
-    wait.until(EC.alert_is_present())
-    alert = self.driver.switch_to_alert()
-    alert.send_keys(text)
-    alert.accept()
 
 

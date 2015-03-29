@@ -3,18 +3,18 @@ __author__ = 'max'
 from selenium.webdriver.common.by import By
 
 
-class MainPageLocators(object):
+class MPL(object):
     SHOW_LOGIN_FORM_BUTTON = (By.CLASS_NAME, 'button-login')
     LOGIN_FIELD = (By.XPATH, '//input[@name="login"]')
     PASSWORD_FIELD = (By.XPATH, '//input[@name="password"]')
     LOGIN_BUTTON = (By.ID, 'popup-login-form')
 
 
-class TopMenuLocators(object):
+class TML(object):
     USERNAME = (By.XPATH, '//a[@class="username"]')
 
 
-class TopicLocators(object):
+class TL(object):
     NOTICE = (By.CLASS_NAME, 'system-message-notice')
     TITLE = (By.XPATH, '//*[@class="topic-title"]/a')
     TEXT = (By.XPATH, '//*[@class="topic-content text"]/p')
@@ -26,7 +26,7 @@ class TopicLocators(object):
     COMMENT_ADD_LINK = (By.CLASS_NAME, 'comment-add-link')
 
 
-class CreateTopicLocators(object):
+class CTL(object):
     CREATE_TOPIC_BUTTON = (By.XPATH, '//button[@type="submit"]')
     SYSTEM_MESSAGE_ERROR = (By.CLASS_NAME, 'system-message-error')
     BLOGSELECT = (By.XPATH, '//a[@class="chzn-single"]')
