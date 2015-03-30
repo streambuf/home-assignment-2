@@ -11,8 +11,8 @@ def not_create_topic(fn):
     return wrapper
 
 
-def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=True):
-    create_topic_page = CreateTopicPage(driver)
+def fill_topic_data(action, title='', outer_text='', inner_text='', blog_select=True):
+    create_topic_page = CreateTopicPage(action)
     create_topic_page.open()
     if blog_select:
         create_topic_page.blog_select_open()
@@ -24,7 +24,7 @@ def fill_topic_data(driver, title='', outer_text='', inner_text='', blog_select=
 
 
 def create_topic_with_tag(self, inner_text):
-    args = (self.driver, TITLE, OUTER_TEXT, inner_text)
+    args = (self.action, TITLE, OUTER_TEXT, inner_text)
     create_topic_page = fill_topic_data(*args)
     create_topic_page.create_topic()
-    return TopicPage(self.driver)
+    return TopicPage(self.action)

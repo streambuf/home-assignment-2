@@ -2,6 +2,7 @@ __author__ = 'max'
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver import ActionChains
 
 TIMEOUT = 10
 POLL_FREQUENCY = 0.1
@@ -15,17 +16,27 @@ class Action(object):
     def find(self, locator):
         return self.driver.find_element(*locator)
 
+    def find_num(self, locator, num):
+        return self.driver.find_elements(*locator)[num]
+
     def click(self, locator):
         self.find(locator).click()
 
     def click_num(self, locator, num):
-        self.find(locator)[num].click()
+        self.find_num(locator, num).click()
 
     def input(self, locator, text):
         self.find(locator).send_keys(text)
 
     def input_num(self, locator, text, num):
-        self.find(locator)[num].send_keys(text)
+        self.find_num(locator, num).send_keys(text)
+
+    def input_num_with_imitation_user(self, locator, text, num):
+        text_area = self.find_num(locator, num)
+        actions = ActionChains(self.driver)
+        actions.click(text_area)
+        actions.send_keys(text)
+        actions.perform()
 
     def get_attr(self, locator, attr):
         return self.find(locator).get_attribute(attr)
@@ -63,19 +74,14 @@ class Action(object):
 
     def click_if_selected(self, locator):
         checkbox = self.find(locator)
-        if not checkbox.is_selected():
+        if checkbox.is_selected():
             checkbox.click()
 
     def execute_script(self, script):
         self.driver.execute_script(script)
 
-    def wait_input_text(self, locator, attr):
-        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
-            lambda d: self.get_attr(locator, attr) != EMPTY_FIELD
-        )
-
     def wait_is_displayed(self, locator):
-        WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
+        return WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY).until(
             lambda d: d.find_element(*locator).is_displayed()
         )
 
@@ -85,3 +91,7 @@ class Action(object):
         alert = self.driver.switch_to_alert()
         alert.send_keys(text)
         alert.accept()
+
+    def close(self):
+        self.driver.close()
+

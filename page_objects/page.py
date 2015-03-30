@@ -4,17 +4,15 @@ __author__ = 'max'
 import os
 from locators import *
 from constants import Tag
-from action import Action
 
 USER_PASSWORD = os.environ['TTHA2PASSWORD']
-NUM_OUTER_PANEL = 1
-NUM_PROFILE = 1
+PANEL1 = 0
+PANEL2 = 1
 
 
 class BasePage(object):
-    def __init__(self, driver):
-        self.driver = driver
-        self.action = Action(self.driver)
+    def __init__(self, action):
+        self.action = action
 
 
 class MainPage(BasePage):
@@ -37,32 +35,32 @@ class TopMenuPage(BasePage):
 
 class TopicPage(BasePage):
     def get_title(self):
-        self.action.get_text_with_wait(TL.TITLE)
+        return self.action.get_text_with_wait(TL.TITLE)
 
     def get_text(self):
-        self.action.get_text_with_wait(TL.TEXT)
+        return self.action.get_text_with_wait(TL.TEXT)
 
     def get_html(self):
-        self.action.get_attr_with_wait(TL.CONTENT, 'innerHTML')
+        return self.action.get_attr_with_wait(TL.CONTENT, 'innerHTML')
 
     def get_author(self):
-        self.action.get_text_with_wait(TL.AUTHOR)
+        return self.action.get_text_with_wait(TL.AUTHOR)
 
     def open_blog(self):
-        self.action.click(TL.BLOG)
+        return self.action.click(TL.BLOG)
 
     def delete(self):
         self.action.click(TL.DELETE_BUTTON)
         self.action.click(TL.DELETE_BUTTON_CONFIRM)
 
     def comment_add_link_is_displayed(self):
-        self.action.is_exists(TL.COMMENT_ADD_LINK)
+        return self.action.is_exists(TL.COMMENT_ADD_LINK)
 
 
 class BlogPage(BasePage):
     @property
     def topic(self):
-        return TopicPage(self.driver)
+        return TopicPage(self.action)
 
 
 class CreateTopicPage(BasePage):
@@ -70,14 +68,13 @@ class CreateTopicPage(BasePage):
 
     def open(self):
         self.action.open_page(self.CREATE_TOPIC_PAGE_URL)
-        self.action.execute_script('$("#id_text_short").show()')
-        TopMenuPage(self.driver).get_username()
+        TopMenuPage(self.action).get_username()
 
     def create_topic(self):
         self.action.submit(CTL.CREATE_TOPIC_BUTTON)
 
     def is_error(self):
-        return self.action.is_displayed(CTL.SYSTEM_MESSAGE_ERROR)
+        return self.action.wait_is_displayed(CTL.SYSTEM_MESSAGE_ERROR)
 
     def blog_select_open(self):
         self.action.click(CTL.BLOGSELECT)
@@ -89,10 +86,10 @@ class CreateTopicPage(BasePage):
         self.action.input(CTL.TITLE, title)
 
     def set_outer_text(self, outer_text):
-        self.action.input(CTL.SHORT_TEXT, outer_text)
+        self.action.input_num_with_imitation_user(CTL.TEXT_AREA, outer_text, PANEL1)
 
     def set_inner_text(self, inner_text):
-        self.action.input(CTL.MAIN_TEXT, inner_text)
+        self.action.input_num_with_imitation_user(CTL.TEXT_AREA, inner_text, PANEL2)
 
     def set_forbid_comment_true(self):
         self.action.click_if_not_selected(CTL.FORBID_COMMENT_CHECKBOX)
@@ -102,29 +99,28 @@ class CreateTopicPage(BasePage):
 
     def insert_tag(self, tag):
         locator = {
-            Tag.H4: CTL.BUTTON_H4,
-            Tag.H5: CTL.BUTTON_H5,
-            Tag.H6: CTL.BUTTON_H6,
             Tag.B: CTL.BUTTON_B,
             Tag.I: CTL.BUTTON_I,
             Tag.QUOTES: CTL.BUTTON_QUOTES,
-            Tag.CODE: CTL.BUTTON_CODE,
             Tag.LIST: CTL.BUTTON_LIST,
             Tag.NUM_LIST: CTL.BUTTON_NUM_LIST,
             Tag.IMAGE: CTL.BUTTON_IMAGE,
+            Tag.IMAGE_URL: CTL.BUTTON_IMAGE_URL,
             Tag.LINK: CTL.BUTTON_LINK,
             Tag.LINK_PROFILE: CTL.BUTTON_LINK_PROFILE
         }[tag]
-        self.action.click_num(locator, NUM_OUTER_PANEL)
+        self.action.click_num(locator, PANEL1)
 
     def set_image(self, path):
         self.action.execute_script('$(".markdown-upload-photo-container").show()')
-        self.action.input_num(CTL.INPUT_FILE, NUM_OUTER_PANEL, path)
-        self.action.wait_input_text(CTL.SHORT_TEXT, 'value')
+        self.action.input_num(CTL.INPUT_FILE, path, PANEL1)
+        self.action.wait_is_displayed(CTL.IMAGE_STRING)
 
-    def set_link(self, url, title):
+    def set_image_link(self, path):
+        self.action.set_text_alert(path)
+
+    def set_link(self, url):
         self.action.set_text_alert(url)
-        self.action.set_text_alert(title)
 
     def set_profile(self, profile_name):
         self.action.input(CTL.SEARCH_USER_FIELD, profile_name)
@@ -132,7 +128,7 @@ class CreateTopicPage(BasePage):
         self.action.click(CTL.USER_PROFILE_LINK)
 
     def get_outer_text(self):
-        return self.action.get_attr(CTL.SHORT_TEXT, 'value')
+        return self.action.get_text_with_wait(CTL.OUTER_AREA)
 
     def set_add_poll_true(self):
         self.action.click_if_selected(CTL.ADD_POLL_CHECKBOX)
