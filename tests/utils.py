@@ -28,3 +28,11 @@ def create_topic_with_tag(self, inner_text):
     create_topic_page = fill_topic_data(*args)
     create_topic_page.create_topic()
     return TopicPage(self.action)
+
+def create_poll(self, create_topic_page):
+    create_topic_page.set_add_poll_true()
+    create_topic_page.add_answer_for_poll()
+    create_topic_page.set_question_poll(POLL_QUESTION)
+    create_topic_page.set_answer_poll(0, POLL_ANSWER1)
+    create_topic_page.set_answer_poll(1, POLL_ANSWER2)
+    create_topic_page.set_answer_poll(2, POLL_ANSWER3)

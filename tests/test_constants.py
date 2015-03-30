@@ -13,7 +13,10 @@ INNER_TEXT = u'Текст под катом'
 MAX_TITLE_LENGTH = 250
 PATH_TO_IMAGE = u'/home/max/1.png'
 URl = u'http://test.ru'
-URL_TITLE = u'title'
+POLL_QUESTION = u'Вопрос для голосования'
+POLL_ANSWER1 = u'Answer1'
+POLL_ANSWER2 = u'Answer2'
+POLL_ANSWER3 = u'Answer3'
 BROWSER = USER_PASSWORD = os.environ['TTHA2BROWSER']
 
 Panel = namedtuple("Panel", "text markdown html")

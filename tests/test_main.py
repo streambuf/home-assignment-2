@@ -115,7 +115,7 @@ class MainTestCase(unittest.TestCase):
     def test_create_topic_with_tag_quotes(self):
         self.topic_page = create_topic_with_tag(self, QUOTES.text)
         self.assertIn(QUOTES.html, self.topic_page.get_html())
-
+    #
     def test_create_topic_with_tag_list(self):
         self.topic_page = create_topic_with_tag(self, LIST.text)
         self.assertIn(LIST.html, self.topic_page.get_html())
@@ -184,7 +184,7 @@ class MainTestCase(unittest.TestCase):
     def test_create_topic_markdown_link(self):
         create_topic_page = fill_topic_data(self.action)
         create_topic_page.insert_tag(Tag.LINK)
-        create_topic_page.set_link(URl, URL_TITLE)
+        create_topic_page.set_link(URl)
         self.assertIn(LINK.markdown, create_topic_page.get_outer_text())
 
     @not_create_topic
@@ -194,6 +194,35 @@ class MainTestCase(unittest.TestCase):
         create_topic_page.set_profile(PROFILE_NAME)
         profile_markdown = unicode(LINK_PROFILE.markdown, "utf-8")
         self.assertIn(profile_markdown, create_topic_page.get_outer_text())
+
+    def test_create_topic_with_poll(self):
+        args = (self.action, TITLE, OUTER_TEXT, INNER_TEXT)
+        create_topic_page = fill_topic_data(*args)
+        create_poll(self, create_topic_page)
+        create_topic_page.create_topic()
+
+        self.topic_page = TopicPage(self.action)
+        answers = self.topic_page.get_poll_answers()
+        self.assertIn(answers[0], POLL_ANSWER1)
+        self.assertIn(answers[1], POLL_ANSWER2)
+        self.assertIn(answers[2], POLL_ANSWER3)
+
+    @not_create_topic
+    def test_create_topic_add_answer_for_poll(self):
+        args = (self.action, TITLE, OUTER_TEXT, INNER_TEXT)
+        create_topic_page = fill_topic_data(*args)
+        create_topic_page.set_add_poll_true()
+        create_topic_page.add_answer_for_poll()
+        self.assertTrue(create_topic_page.new_answer_is_displayed())
+
+    @not_create_topic
+    def test_create_topic_del_answer_for_poll(self):
+        args = (self.action, TITLE, OUTER_TEXT, INNER_TEXT)
+        create_topic_page = fill_topic_data(*args)
+        create_topic_page.set_add_poll_true()
+        create_topic_page.add_answer_for_poll()
+        create_topic_page.delete_answer_for_poll()
+        self.assertFalse(create_topic_page.new_answer_is_displayed())
 
     def tearDown(self):
         if self.post_created:

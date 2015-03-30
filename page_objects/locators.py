@@ -24,6 +24,9 @@ class TL(object):
     DELETE_BUTTON_CONFIRM = (By.XPATH, '//input[@value="Удалить"]')
     AUTHOR = (By.XPATH, '//a[@rel="author"]')
     COMMENT_ADD_LINK = (By.CLASS_NAME, 'comment-add-link')
+    LABEL_ANSWER1 = (By.XPATH, '//*[@class=("poll-vote")]/li[1]/label')
+    LABEL_ANSWER2 = (By.XPATH, '//*[@class=("poll-vote")]/li[2]/label')
+    LABEL_ANSWER3 = (By.XPATH, '//*[@class=("poll-vote")]/li[3]/label')
 
 
 class CTL(object):
@@ -39,7 +42,7 @@ class CTL(object):
     POLL_QUESTION_FIELD = (By.ID, 'id_question')
     POLL_ANSWER1_FIELD = (By.ID, 'id_form-0-answer')
     POLL_ANSWER2_FIELD = (By.ID, 'id_form-1-answer')
-    POLL_ANSWER3_FIELD = (By.ID, 'id_form-2-answer')
+    POLL_ANSWER3_FIELD = (By.XPATH, '//*[contains(@id, "id_form-2-answer")][2]')
     ADD_ANSWER_LINK = (By.CLASS_NAME, 'add-poll-answer')
     INPUT_FILE = (By.NAME, 'filedata')
     BUTTON_B = (By.CLASS_NAME, 'markdown-editor-icon-bold')
@@ -55,5 +58,6 @@ class CTL(object):
     USER_PROFILE_LINK = (By.CSS_SELECTOR, '.realname>.user_profile_path')
     OUTER_AREA = (By.XPATH, '//div[@class="CodeMirror-code"]/pre')
     IMAGE_STRING = (By.CLASS_NAME, 'cm-string')
+    DELETE_POLL_ANSWER = (By.XPATH, '//*[@id="question_list"]/li[3]/a')
 
 

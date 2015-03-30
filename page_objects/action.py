@@ -4,7 +4,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver import ActionChains
 
-TIMEOUT = 10
+TIMEOUT = 30
 POLL_FREQUENCY = 0.1
 EMPTY_FIELD = u''
 
@@ -65,7 +65,10 @@ class Action(object):
         return True
 
     def is_displayed(self, locator):
-        return self.find(locator).is_displayed()
+        try:
+            return self.find(locator).is_displayed()
+        except NoSuchElementException:
+            return False
 
     def click_if_not_selected(self, locator):
         checkbox = self.find(locator)
@@ -91,6 +94,10 @@ class Action(object):
         alert = self.driver.switch_to_alert()
         alert.send_keys(text)
         alert.accept()
+
+    def wait_element_attaching(self, locator):
+        wait = WebDriverWait(self.driver, TIMEOUT, POLL_FREQUENCY)
+        wait.until(EC.presence_of_all_elements_located(locator))
 
     def close(self):
         self.driver.close()

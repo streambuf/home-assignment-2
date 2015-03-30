@@ -2,6 +2,7 @@
 __author__ = 'max'
 
 import os
+import time
 from locators import *
 from constants import Tag
 
@@ -55,6 +56,12 @@ class TopicPage(BasePage):
 
     def comment_add_link_is_displayed(self):
         return self.action.is_exists(TL.COMMENT_ADD_LINK)
+
+    def get_poll_answers(self):
+        return [
+            self.action.get_text_with_wait(TL.LABEL_ANSWER1),
+            self.action.get_text_with_wait(TL.LABEL_ANSWER2),
+            self.action.get_text_with_wait(TL.LABEL_ANSWER3)]
 
 
 class BlogPage(BasePage):
@@ -124,6 +131,7 @@ class CreateTopicPage(BasePage):
 
     def set_profile(self, profile_name):
         self.action.input(CTL.SEARCH_USER_FIELD, profile_name)
+        self.action.wait_element_attaching(CTL.USER_PROFILE_LINK)
         self.action.wait_is_displayed(CTL.USER_PROFILE_LINK)
         self.action.click(CTL.USER_PROFILE_LINK)
 
@@ -131,10 +139,16 @@ class CreateTopicPage(BasePage):
         return self.action.get_text_with_wait(CTL.OUTER_AREA)
 
     def set_add_poll_true(self):
-        self.action.click_if_selected(CTL.ADD_POLL_CHECKBOX)
+        self.action.click_if_not_selected(CTL.ADD_POLL_CHECKBOX)
 
     def add_answer_for_poll(self):
         self.action.click(CTL.ADD_ANSWER_LINK)
+
+    def delete_answer_for_poll(self):
+        self.action.click(CTL.DELETE_POLL_ANSWER)
+
+    def new_answer_is_displayed(self):
+        return self.action.is_displayed(CTL.POLL_ANSWER3_FIELD)
 
     def set_question_poll(self, question):
         self.action.input(CTL.POLL_QUESTION_FIELD, question)
