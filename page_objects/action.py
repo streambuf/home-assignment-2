@@ -100,5 +100,5 @@ class Action(object):
         wait.until(EC.presence_of_all_elements_located(locator))
 
     def close(self):
-        self.driver.close()
+        self.driver.quit()
 
