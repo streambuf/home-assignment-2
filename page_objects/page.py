@@ -41,7 +41,7 @@ class TopicPage(BasePage):
         return self.action.get_text_with_wait(TopicLocators.TEXT)
 
     def get_html(self):
-        return self.action.get_attr_with_wait(TopicLocators.CONTENT, 'innerHTopMenuLocators')
+        return self.action.get_attr_with_wait(TopicLocators.CONTENT, 'innerHTML')
 
     def get_author(self):
         return self.action.get_text_with_wait(TopicLocators.AUTHOR)
