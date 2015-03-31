@@ -13,8 +13,8 @@ from tests.test_auth import AuthTestCase
 
 if __name__ == '__main__':
     suite = unittest.TestSuite((
-        unittest.makeSuite(MainTestCase),
         unittest.makeSuite(AuthTestCase),
+        unittest.makeSuite(MainTestCase),
     ))
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())
