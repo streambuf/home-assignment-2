@@ -13,7 +13,7 @@ class Const(object):
     OUTER_TEXT = u'Краткое описание темы'
     INNER_TEXT = u'Текст под катом'
     MAX_TITLE_LENGTH = 250
-    PATH_TO_IMAGE = u'/home/max/1.png'
+    PATH_TO_IMAGE = os.path.dirname(__file__) + '/img/kotik.jpg'
     URl = u'http://test.ru'
     POLL_QUESTION = u'Вопрос для голосования'
     POLL_ANSWER1 = u'Answer1'
